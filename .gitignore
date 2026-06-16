@@ -1,12 +1,11 @@
-# PDFs
-*.pdf
+# Root-level PDFs (assignment handouts)
+/*.pdf
 
 # LaTeX build artifacts
 *.aux
 *.log
 *.synctex.gz
 *.toc
-*.out
 
 # R artifacts
 .RData
