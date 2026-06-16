@@ -1,0 +1,700 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{geometry}
+\geometry{left=2.5cm, right=2cm, top=2.5cm, bottom=2.5cm}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Вариант 14 (513201226)}
+\fancyhead[R]{\small Математическая статистика}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\usepackage{listings}
+\lstset{
+	language=R,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{blue!70!black}\bfseries,
+	commentstyle=\color{green!50!black}\itshape,
+	stringstyle=\color{red!60!black},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	frame=single,
+	breaklines=true,
+	showstringspaces=false,
+	backgroundcolor=\color{gray!5}
+}
+
+\newcommand{\lam}{\lambda}
+\newcommand{\lahat}{\hat{\lambda}}
+\newcommand{\ahat}{\hat{a}}
+\newcommand{\shat}{\hat{\sigma}^2}
+\newcommand{\xbar}{\bar{x}}
+\newcommand{\Dn}{D_n}
+\newcommand{\chisq}{\chi^2}
+\newcommand{\Ho}{H_0}
+\newcommand{\Hi}{H_1}
+
+
+\begin{document}
+	
+	\thispagestyle{empty}
+	\begin{titlepage}
+		\begin{center}
+			\textbf{МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ\\
+				РОССИЙСКОЙ ФЕДЕРАЦИИ}\\[6pt]
+			Федеральное государственное автономное образовательное учреждение\\
+			высшего образования <<Санкт-Петербургский политехнический\\
+			университет Петра Великого>>\\[6pt]
+			Институт компьютерных наук и кибербезопасности\\
+			Высшая школа технологий искусственного интеллекта\\[6pt]
+			Направление: 02.03.01 <<Математика и компьютерные науки>>
+			
+			\vfill
+			
+			{\large\textbf{Индивидуальное домашнее задание №3}}\\[6pt]
+			по дисциплине\\[4pt]
+			{\large <<Математическая статистика>>}\\[12pt]
+			{\large Вариант №{} 14}
+			
+			\vfill
+			
+			\small{
+				\begin{tabular}{lrrl}
+					\!\!\!Студент, & \hspace{2cm} & & \\
+					\!\!\!группы 5130201/30102 & \hspace{2cm} & \underline{\hspace{3cm}} & Санько В. В. \\\\
+					\!\!\!Преподаватель & \hspace{2cm} & \underline{\hspace{3cm}} & Малов С. В. \\\\
+					&&\hspace{4cm}
+				\end{tabular}
+				\begin{flushright}
+					<<\underline{\hspace{1cm}}>>\underline{\hspace{2.5cm}} 2026г.
+				\end{flushright}
+			}
+			
+			\hfill \break
+			\begin{center} \small{Санкт-Петербург, 2026} \end{center}
+		\end{center}
+	\end{titlepage}
+	
+	\tableofcontents
+	\newpage
+	
+	% ══════════════════════════════════════════════════════════════
+	\section{Задание 1. Распределение Пуассона}
+	% ══════════════════════════════════════════════════════════════
+	
+	\subsection*{Данные}
+	Выборка объёма $n = 50$:
+	\[
+	1\;0\;1\;1\;3\;1\;0\;1\;0\;1\;1\;1\;0\;1\;1\;0\;0\;1\;2\;0\;
+	1\;1\;0\;1\;1\;0\;2\;0\;0\;0\;0\;1\;1\;0\;0\;2\;0\;1\;0\;1\;
+	1\;0\;1\;0\;0\;0\;1\;2\;0\;2
+	\]
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{a) Вариационный ряд, ECDF и гистограмма}
+		
+		\textbf{Задание:} построить вариационный ряд, эмпирическую функцию распределения
+		и гистограмму частот.
+	
+	\textbf{Вариационный ряд} (упорядоченный набор исходных данных):
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+			\hline
+			0&0&0&0&0&0&0&0&0&0\\
+			\hline
+			0&0&0&0&0&0&0&0&0&0\\
+			\hline
+			0&0&1&1&1&1&1&1&1&1\\
+			\hline
+			1&1&1&1&1&1&1&1&1&1\\
+			\hline
+			1&1&1&1&2&2&2&2&2&3\\
+			\hline
+		\end{tabular}
+		\caption{Вариационный ряд}
+	\end{table}
+	
+	\textbf{Эмпирическая функция распределения} показывает долю элементов выборки $\le x$:
+	\[
+	F^*(x) = \frac{1}{n}\sum_{i=1}^{n}\mathbf{1}[x_i \le x].
+	\]
+	
+	\textbf{Таблица частот:}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{ccccc}
+			\toprule
+			$x_i$ & $n_i$ & $\tilde{n}_i = n_i/n$ & $F^*(x_i)$ & $p_i^{\text{теор}}(\hat\lambda)$ \\
+			\midrule
+			0 & 22 & 0{,}44 & 0{,}44 & 0{,}4966 \\
+			1 & 22 & 0{,}44 & 0{,}88 & 0{,}3476 \\
+			2 &  5 & 0{,}10 & 0{,}98 & 0{,}1217 \\
+			3 &  1 & 0{,}02 & 1{,}00 & 0{,}0284 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Таблица частот выборки (задание 1)}
+	\end{table}
+	
+	\textbf{Эмпирическая функция распределения:}
+	\[
+	F^*(x) = \frac{1}{n}\sum_{i=1}^{n} \mathbf{1}[x_i \le x].
+	\]
+	
+	Графики строятся в R командами \texttt{barplot(rel\_freq, \ldots)} и \texttt{plot(ecdf(x), \ldots)}.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Выборочные числовые характеристики}
+	
+	\begin{align}
+		\text{(I) Выборочное среднее:}\quad &
+		\xbar = \frac{1}{n}\sum_{i=1}^{n} x_i
+		= \frac{0 \cdot 22 + 1 \cdot 22 + 2 \cdot 5 + 3 \cdot 1}{50}
+		= \frac{35}{50} = 0{,}70 \\[4pt]
+		\text{(II) Дисперсия (несмещённая):}\quad &
+		s^2 = \frac{1}{n-1}\sum_{i=1}^{n}(x_i - \xbar)^2 \approx 0{,}5408 \\[4pt]
+		\text{(III) Медиана:}\quad &
+		\mathrm{Me} = 1{,}00 \\[4pt]
+		\text{(IV) Коэф.\,асимметрии:}\quad &
+		A_s = \frac{\mu_3}{\mu_2^{3/2}} \approx 0{,}8397 \\[4pt]
+		\text{(V) Эксцесс:}\quad &
+		E_x = \frac{\mu_4}{\mu_2^2} - 3 \approx 0{,}3980 \\[4pt]
+		\text{(VI) Вероятность:}\quad &
+		\mathbf{P}^*(X \in [a,b]) = \mathbf{P}^*(X \in [0{,}00;\,1{,}20])
+		= \\ 
+		=  \frac{|\{x_i : 0 \le x_i \le 1{,}2\}|}{n} = \frac{44}{50} = 0{,}88
+	\end{align}
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Оценки параметра \texorpdfstring{$\lambda$}{lambda}
+		распределения Пуассона}
+	
+	Для распределения Пуассона $\mathrm{Poisson}(\lambda)$:
+	\[
+	P_\lambda(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k = 0,1,2,\ldots
+	\]
+	
+	\subsubsection*{Оценка максимального правдоподобия (МПП)}
+	Логарифм правдоподобия:
+	\[
+	\ell(\lambda) = \sum_{i=1}^{n}\bigl(x_i \ln\lambda - \lambda - \ln(x_i!)\bigr).
+	\]
+	Приравнивая производную нулю:
+	\[
+	\frac{d\ell}{d\lambda} = \frac{\sum x_i}{\lambda} - n = 0
+	\quad\Rightarrow\quad
+	\lahat_{\mathrm{МПП}} = \xbar = 0{,}70.
+	\]
+	
+	\subsubsection*{Метод моментов (ММ)}
+	$\mathrm{E}[X] = \lambda$, поэтому $\lahat_{\mathrm{ММ}} = \xbar = 0{,}70$ — совпадает с МПП.
+	
+	\subsubsection*{Смещение оценок}
+	$\mathrm{E}[\lahat_{\mathrm{МПП}}] = \lambda$ — \textbf{оценка несмещённая}.
+	Bootstrap-смещение $\approx 0$ (подтверждено в R).
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Асимптотический доверительный интервал для
+		\texorpdfstring{$\lambda$}{lambda}}
+	
+	По ЦПТ $\sqrt{n}(\lahat - \lambda)/\sqrt{\lambda} \xrightarrow{d} N(0,1)$, откуда:
+	\[
+	\lahat \pm z_{1-\alpha_1/2}\,\sqrt{\frac{\lahat}{n}},
+	\quad z_{0{,}975} = 1{,}96, \quad n = 50.
+	\]
+	\[
+	\mathrm{SE}(\lahat) = \sqrt{0{,}70/50} = 0{,}1183.
+	\]
+	\[
+	\boxed{
+		\mathrm{ДИ}_{0{,}95}(\lambda):\ \bigl[0{,}4681;\; 0{,}9319\bigr].
+	}
+	\]
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Критерий \texorpdfstring{$\chi^2$}{chi2}: простая гипотеза
+		\texorpdfstring{$H_0\colon\mathrm{Poisson}(\lambda_0 = 1{,}4)$}{}}
+	
+	Статистика Пирсона:
+	\[
+	\chi^2 = \sum_{j=1}^{k}\frac{(n_j - n p_j^{(0)})^2}{n p_j^{(0)}},
+	\quad
+	p_j^{(0)} = P_{\lambda_0}(X = j-1).
+	\]
+	Группировка (объединяем значения $\ge 3$):
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{lccc}
+			\toprule
+			Группа & $n_j$ (набл.) & $np_j^{(0)}$ (ожид., $\lambda_0=1{,}4$) & $(n_j - np_j^{(0)})^2/np_j^{(0)}$ \\
+			\midrule
+			$X=0$   & 22 & 12{,}33 &  7{,}603 \\
+			$X=1$   & 22 & 17{,}26 &  1{,}302 \\
+			$X=2$   &  5 & 12{,}08 &  4{,}145 \\
+			$X\ge3$ &  1 &  5{,}64 &  3{,}803 \\
+			\bottomrule
+			\multicolumn{3}{r}{$\chi^2_{\text{набл}} =$} & \textbf{16{,}853} \\
+		\end{tabular}
+		\caption{Простая гипотеза $\mathrm{Poisson}(\lambda_0=1{,}4)$}
+	\end{table}
+	
+	Число степеней свободы: $\nu = k - 1 = 3$ (простая гипотеза).
+	Критическое значение: $\chi^2_{0{,}95}(3) = 7{,}815$.
+	
+	\[
+	\chi^2_{\text{набл}} = 16{,}853 > 7{,}815 = \chi^2_{\text{крит}}.
+	\]
+	\textbf{Вывод:} гипотеза $H_0\colon\mathrm{Poisson}(1{,}4)$ \textbf{отвергается} на уровне $\alpha_1 = 0{,}05$.
+	
+	$p\text{-значение} \approx 0{,}0008$ — наибольший уровень, при котором $H_0$ не отвергается.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Критерий \texorpdfstring{$\chi^2$}{chi2}: сложная гипотеза
+		\texorpdfstring{$H_0\colon\mathrm{Poisson}(\lambda)$}{}}
+	
+	Параметр $\lambda$ оценивается по выборке: $\lahat = \xbar = 0{,}70$.
+	Степени свободы уменьшаются на число оцениваемых параметров: $\nu = k - 1 - 1 = 2$.
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{lccc}
+			\toprule
+			Группа & $n_j$ & $np_j(\lahat{=}0{,}7)$ & $(n_j - np_j)^2/np_j$ \\
+			\midrule
+			$X=0$   & 22 & 24{,}83 & 0{,}322 \\
+			$X=1$   & 22 & 17{,}38 & 1{,}229 \\
+			$X=2$   &  5 &  6{,}08 & 0{,}193 \\
+			$X\ge3$ &  1 &  1{,}42 & 0{,}123 \\
+			\bottomrule
+			\multicolumn{3}{r}{$\chi^2_{\text{набл}} =$} & \textbf{1{,}867} \\
+		\end{tabular}
+		\caption{Сложная гипотеза $\mathrm{Poisson}(\lahat)$}
+	\end{table}
+	
+	$\chi^2_{0{,}95}(2) = 5{,}991$.
+	\[
+	\chi^2_{\text{набл}} = 1{,}867 < 5{,}991 = \chi^2_{\text{крит}}.
+	\]
+	\textbf{Вывод:} нет оснований отвергнуть $H_0$ на уровне $0{,}05$.
+	$p\text{-значение} \approx 0{,}393$.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Наиболее мощный критерий (НМК):
+		\texorpdfstring{$H_0\colon\lambda=\lambda_0$}{} против
+		\texorpdfstring{$H_1\colon\lambda=\lambda_1$}{}}
+	
+	По лемме Неймана--Пирсона НМК основан на отношении правдоподобий.
+	Достаточная статистика $T = \sum_{i=1}^n x_i \sim \mathrm{Poisson}(n\lambda)$.
+	
+	Поскольку $\lambda_1 = 0{,}70 < \lambda_0 = 1{,}40$, отношение правдоподобий убывает в $T$,
+	поэтому \textbf{критическая область левосторонняя}: $T \le c$.
+	
+	\[
+	T_{\text{набл}} = \sum x_i = 35, \qquad T|H_0 \sim \mathrm{Poisson}(50 \cdot 1{,}4 = 70).
+	\]
+	
+	Критическое значение из условия $P(T \le c \mid H_0) \le \alpha_1 = 0{,}05$:
+	$c = 57$ (реальный уровень $\alpha^* \approx 0{,}064$).
+	
+	\[
+	T_{\text{набл}} = 35 \le 57 = c \quad\Rightarrow\quad \textbf{$H_0$ отвергается}.
+	\]
+	
+	Мощность: $\beta = P(T \le 57 \mid H_1) = P(\mathrm{Poisson}(35) \le 57) \approx 0{,}9998$.
+	
+	\subsubsection*{Перестановка гипотез}
+	При $H_0\colon\lambda=\lambda_1=0{,}7$ против $H_1\colon\lambda=\lambda_0=1{,}4$
+	критическая область \textbf{правосторонняя}: $T \ge c'$.
+	$T|H_0 \sim \mathrm{Poisson}(35)$, $c' = 45$, $\alpha^* \approx 0{,}059$.
+	$T_{\text{набл}} = 35 < 45$ $\Rightarrow$ $H_0$ \textbf{не отвергается}.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Геометрическое распределение}
+	
+	Семейство геометрических распределений с вероятностями
+	\[
+	P_\lambda(X = k) = \frac{\lambda^k}{(\lambda+1)^{k+1}}, \quad k = 0,1,2,\ldots,
+	\quad \mathrm{E}[X] = \lambda.
+	\]
+	
+	\subsubsection*{(c) Оценки}
+	МПП и ММ совпадают: $\lahat = \xbar = 0{,}70$ (несмещённая).
+	
+	\subsubsection*{(d) Доверительный интервал}
+	$\mathrm{D}[X] = \lambda(\lambda+1)$, поэтому по ЦПТ:
+	\[
+	\lahat \pm z_{0{,}975}\sqrt{\frac{\lahat(\lahat+1)}{n}}
+	= 0{,}70 \pm 1{,}96 \cdot \sqrt{\frac{0{,}70 \cdot 1{,}70}{50}}
+	= 0{,}70 \pm 0{,}3024.
+	\]
+	\[
+	\boxed{\mathrm{ДИ}_{0{,}95}(\lambda)_{\mathrm{geom}}: [0{,}398;\; 1{,}002].}
+	\]
+	
+	\subsubsection*{(e) $\chi^2$ простая гипотеза $H_0\colon \mathrm{Geom}(\lambda_0=1{,}4)$}
+	После группировки $\chi^2_{\text{набл}} \approx 16{,}69$, $\nu=3$,
+	$\chi^2_{\text{крит}} = 7{,}815$. $H_0$ \textbf{отвергается} ($p \approx 0{,}0008$).
+	
+	\subsubsection*{(f) $\chi^2$ сложная гипотеза}
+	$\chi^2_{\text{набл}} \approx 11{,}72$, $\nu=2$, $\chi^2_{\text{крит}}=5{,}991$.
+	$H_0$ \textbf{отвергается} ($p \approx 0{,}003$).
+	
+	\subsubsection*{(g) НМК для геометрического}
+	$T = \sum x_i$ --- достаточная статистика.
+	$\mathrm{E}[T|H_0] = n\lambda_0 = 70$, $\mathrm{D}[T|H_0] = n\lambda_0(\lambda_0+1) = 168$.
+	По ЦПТ: $c = \lfloor 70 + z_{0{,}05}\sqrt{168}\rfloor = 48$.
+	$T_{\text{набл}} = 35 \le 48$ $\Rightarrow$ $H_0$ \textbf{отвергается}. Мощность $\approx 0{,}954$.
+	
+	% ══════════════════════════════════════════════════════════════
+	\newpage
+	\section{Задание 2. Нормальное распределение}
+	% ══════════════════════════════════════════════════════════════
+	
+	\subsection*{Данные}
+	Выборка объёма $n = 50$:
+	
+	\noindent
+	$8{,}752\ 2{,}202\ 2{,}779\ 2{,}717\ 2{,}033\ 2{,}755\ 3{,}688\ 4{,}318\ 2{,}188\ 2{,}878\
+	2{,}243\ 3{,}204\ 3{,}076\ 4{,}700\ 2{,}244\ 4{,}634\ 3{,}069$
+
+	\noindent
+	$1{,}574\ 5{,}394\ 4{,}323\ 2{,}691\ 1{,}079\ 2{,}726\ 1{,}260\ {-}3{,}224\ 3{,}050\ 3{,}714\ 4{,}449\ 2{,}096\ 3{,}271\ 3{,}834\ 1{,}621\ 3{,}466\ 3{,}764$
+	
+	\noindent
+	$2{,}349\ {-}1{,}848\ 4{,}301\ 1{,}119\ 0{,}639\ 7{,}699\ 4{,}572\ 3{,}146\ 2{,}898\ 3{,}383\ 3{,}535\ 3{,}054\ 6{,}165\ 4{,}822\ 2{,}797\ {-}0{,}056$
+	
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Вариационный ряд, гистограмма, полигон частот}
+	
+	Шаг гистограммы $h = 0{,}80$. Интервалы начинаются от $x_{\min}^* = -4{,}0$.
+	
+	\begin{table}[H]
+		\centering
+		\small
+		\begin{tabular}{ccccc}
+			\toprule
+			Интервал & Середина $t_j$ & $n_j$ & $\tilde{n}_j$ & $F^*(t_j)$ \\
+			\midrule
+			$[-4{,}0;\;-3{,}2)$ & $-3{,}6$ & 1 & 0{,}02 & 0{,}02 \\
+			$[-3{,}2;\;-2{,}4)$ & $-2{,}8$ & 0 & 0{,}00 & 0{,}02 \\
+			$[-2{,}4;\;-1{,}6)$ & $-2{,}0$ & 1 & 0{,}02 & 0{,}04 \\
+			$[-1{,}6;\;-0{,}8)$ & $-1{,}2$ & 0 & 0{,}00 & 0{,}04 \\
+			$[-0{,}8;\; 0{,}0)$ & $-0{,}4$ & 1 & 0{,}02 & 0{,}06 \\
+			$[\phantom{-}0{,}0;\; 0{,}8)$ & $0{,}4$ & 1 & 0{,}02 & 0{,}08 \\
+			$[\phantom{-}0{,}8;\; 1{,}6)$ & $1{,}2$ & 4 & 0{,}08 & 0{,}16 \\
+			$[\phantom{-}1{,}6;\; 2{,}4)$ & $2{,}0$ & 8 & 0{,}16 & 0{,}32 \\
+			$[\phantom{-}2{,}4;\; 3{,}2)$ & $2{,}8$ & 13 & 0{,}26 & 0{,}58 \\
+			$[\phantom{-}3{,}2;\; 4{,}0)$ & $3{,}6$ & 9 & 0{,}18 & 0{,}76 \\
+			$[\phantom{-}4{,}0;\; 4{,}8)$ & $4{,}4$ & 7 & 0{,}14 & 0{,}90 \\
+			$[\phantom{-}4{,}8;\; 5{,}6)$ & $5{,}2$ & 2 & 0{,}04 & 0{,}94 \\
+			$[\phantom{-}5{,}6;\; 6{,}4)$ & $6{,}0$ & 1 & 0{,}02 & 0{,}96 \\
+			$[\phantom{-}6{,}4;\; 7{,}2)$ & $6{,}8$ & 0 & 0{,}00 & 0{,}96 \\
+			$[\phantom{-}7{,}2;\; 8{,}0)$ & $7{,}6$ & 1 & 0{,}02 & 0{,}98 \\
+			$[\phantom{-}8{,}0;\; 8{,}8]$ & $8{,}4$ & 1 & 0{,}02 & 1{,}00 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Интервальная таблица частот (шаг $h=0{,}80$)}
+	\end{table}
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Выборочные числовые характеристики}
+	
+	\begin{align}
+		\text{(I)}\ & \xbar = \frac{1}{n}\sum x_i \approx 3{,}0229 \\[4pt]
+		\text{(II)}\ & s^2 = \frac{1}{n-1}\sum(x_i-\xbar)^2 \approx 3{,}8566,
+		\quad D = \frac{n-1}{n}s^2 \approx 3{,}7794 \\[4pt]
+		\text{(III)}\ & \mathrm{Me} = 3{,}052 \\[4pt]
+		\text{(IV)}\ & A_s = \frac{\mu_3}{\mu_2^{3/2}} \approx -0{,}1839 \\[4pt]
+		\text{(V)}\ & E_x = \frac{\mu_4}{\mu_2^2} - 3 \approx 2{,}581 \\[4pt]
+		\text{(VI)}\ & \mathbf{P}^*(X \in [c,d]) = \mathbf{P}^*(X \in [2{,}6;\,4{,}6])
+		= \frac{|\{x_i : 2{,}6 \le x_i \le 4{,}6\}|}{50} = \frac{27}{50} = 0{,}54
+	\end{align}
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Оценки параметров нормального распределения}
+	
+	Нормальное распределение: $f(x) = \dfrac{1}{\sqrt{2\pi}\,\sigma}
+	\exp\!\left(-\dfrac{(x-a)^2}{2\sigma^2}\right)$.
+	
+	\subsubsection*{МПП}
+	\[
+	\ahat_{\text{МПП}} = \xbar \approx 3{,}0229, \qquad
+	\shat_{\text{МПП}} = \frac{1}{n}\sum(x_i-\xbar)^2 = D \approx 3{,}7794.
+	\]
+	
+	\subsubsection*{Метод моментов}
+	$\mathrm{E}[X]=a$, $\mathrm{D}[X]=\sigma^2$, поэтому оценки совпадают с МПП.
+	
+	\subsubsection*{Смещение}
+	$\mathrm{E}[\ahat] = a$ --- несмещённая.\\
+	$\mathrm{E}[\shat_{\text{МПП}}] = \dfrac{n-1}{n}\sigma^2 \ne \sigma^2$ ---
+	\textbf{смещённая}, смещение $-\sigma^2/n \approx -0{,}0771$.\\
+	Несмещённая: $s^2 = \dfrac{n}{n-1}\shat_{\text{МПП}} \approx 3{,}8566$.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Доверительные интервалы уровня \texorpdfstring{$1-\alpha_2 = 0{,}90$}{0.90}}
+	
+	\subsubsection*{ДИ для $a$}
+	\[
+	\xbar \pm t_{1-\alpha_2/2,\,n-1}\cdot\frac{s}{\sqrt{n}},
+	\qquad
+	t_{0{,}95,\,49} = 1{,}6766,\quad s = \sqrt{3{,}8566} \approx 1{,}9639.
+	\]
+	\[
+	\boxed{
+		\mathrm{ДИ}_{0{,}90}(a):\ \bigl[2{,}5572;\; 3{,}4885\bigr].
+	}
+	\]
+	
+	\subsubsection*{ДИ для $\sigma^2$}
+	\[
+	\left[\frac{(n-1)s^2}{\chi^2_{1-\alpha_2/2,\,n-1}}\,;\;
+	\frac{(n-1)s^2}{\chi^2_{\alpha_2/2,\,n-1}}\right],
+	\qquad
+	\chi^2_{0{,}95,49} = 66{,}34,\quad
+	\chi^2_{0{,}05,49} = 33{,}93.
+	\]
+	\[
+	\boxed{
+		\mathrm{ДИ}_{0{,}90}(\sigma^2):\ \bigl[2{,}849;\; 5{,}569\bigr].
+	}
+	\]
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Критерий Колмогорова: \texorpdfstring{$H_0\colon N(a_0, \sigma_0^2)$}{}}
+	
+	Простая гипотеза $H_0\colon N(9;\,4)$.
+	
+	\[
+	D_n = \sup_x |F^*(x) - F_0(x)|, \qquad
+	K_n = \sqrt{n}\,D_n.
+	\]
+	
+	\[
+	D_n \approx 0{,}9043, \qquad K_n = \sqrt{50} \cdot 0{,}9043 \approx 6{,}394.
+	\]
+	
+	Критическое значение при $\alpha_2 = 0{,}10$: $k_{0{,}10} = 1{,}2238$.
+	\[
+	K_n = 6{,}394 \gg 1{,}2238. \quad p\text{-значение} \approx 0.
+	\]
+	\textbf{Вывод:} $H_0\colon N(9;\,4)$ \textbf{уверенно отвергается}.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Критерий \texorpdfstring{$\chi^2$}{chi2}: простая гипотеза
+		\texorpdfstring{$H_0\colon N(a_0,\sigma_0^2)$}{}}
+	
+	Используем $k=10$ равновероятных интервалов (ожидаемое в каждом $n/k = 5$).
+	При простой гипотезе: $\nu = k-1 = 9$.
+	
+	\[
+	\chi^2_{\text{набл}} = \sum_{j=1}^{10}\frac{(n_j - 5)^2}{5} \approx 411{,}2.
+	\]
+	$\chi^2_{0{,}90}(9) = 14{,}68$.
+	\textbf{Вывод:} $H_0$ \textbf{отвергается} ($p \approx 0$).
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Критерий \texorpdfstring{$\chi^2$}{chi2}: сложная гипотеза
+		\texorpdfstring{$H_0\colon N(a,\sigma^2)$}{}}
+	
+	Параметры оцениваются: $\ahat = \xbar$, $\hat\sigma = \sqrt{D}$.
+	$k=8$ равновероятных интервалов по квантилям $N(\ahat, \hat\sigma^2)$.
+	$\nu = k - 1 - 2 = 5$.
+	
+	\[
+	\chi^2_{\text{набл}} \approx 5{,}04, \qquad
+	\chi^2_{0{,}90}(5) = 9{,}236.
+	\]
+	\[
+	5{,}04 < 9{,}236. \quad p \approx 0{,}411.
+	\]
+	\textbf{Вывод:} нет оснований отвергнуть $H_0\colon N(\ahat, \hat\sigma^2)$.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{НМК Неймана--Пирсона:
+		\texorpdfstring{$H_0\colon N(a_0,\sigma_0^2)$}{} против
+		\texorpdfstring{$H_1\colon N(a_1,\sigma_1^2)$}{}}
+	
+	Логарифм отношения правдоподобий:
+	\[
+	\ln\Lambda = \ln\frac{L(\mathbf{x}; a_1, \sigma_1^2)}{L(\mathbf{x}; a_0, \sigma_0^2)}
+	= \sum_{i=1}^{n}\left[\ln f_1(x_i) - \ln f_0(x_i)\right].
+	\]
+	
+	При $a_0=9$, $\sigma_0=2$, $a_1=3$, $\sigma_1=2$ ($\sigma_0=\sigma_1$):
+	\[
+	\ln\Lambda
+	= \frac{1}{8}\sum_{i=1}^n \bigl[(x_i-9)^2 - (x_i-3)^2\bigr]
+	= \frac{n}{8}(72 - 12\xbar).
+	\]
+	
+	Bootstrap-критическое значение при $\alpha_2 = 0{,}10$: $c \approx -197{,}2$.
+	
+	$\ln\Lambda_{\text{набл}} \approx 223{,}3 \gg c$ $\Rightarrow$ \textbf{$H_0$ отвергается}.
+	
+	\subsubsection*{Перестановка гипотез}
+	$\ln\Lambda'_{\text{набл}} = -223{,}3$, $c' \approx -197{,}8$.
+	$\ln\Lambda' < c'$ $\Rightarrow$ $H_0\colon N(3;\,4)$ \textbf{не отвергается}.
+	
+	% ─────────────────────────────────────────────────────────────
+	\subsection{Распределение Лапласа}
+	
+	Двухпараметрическое семейство Лапласа:
+	\[
+	f(x) = \frac{1}{\sqrt{2}\,\sigma}\exp\!\left(-\frac{\sqrt{2}}{\sigma}|x - a|\right).
+	\]
+	
+	\subsubsection*{(c) Оценки МПП}
+	\[
+	\ahat_{\text{Lap}} = \mathrm{Me} = 3{,}052,
+	\qquad
+	\hat\sigma_{\text{Lap}} = \sqrt{2}\cdot\frac{1}{n}\sum_{i=1}^n |x_i - \ahat| \approx 1{,}853.
+	\]
+	
+	\subsubsection*{(d) ДИ для $a$ (Лаплас)}
+	\[
+	\ahat \pm z_{0{,}95}\cdot\frac{\hat\sigma}{\sqrt{n}}
+	= 3{,}052 \pm 1{,}645 \cdot \frac{1{,}853}{\sqrt{50}}
+	\approx 3{,}052 \pm 0{,}431.
+	\]
+	\[
+	\boxed{\mathrm{ДИ}_{0{,}90}(a)_{\text{Lap}}: [2{,}621;\; 3{,}483].}
+	\]
+	
+	\subsubsection*{(e) Критерий Колмогорова: $H_0\colon\mathrm{Laplace}(a_0=9, \sigma_0=2)$}
+	\[
+	K_n \approx 6{,}371 \gg 1{,}2238 \quad\Rightarrow\quad H_0 \text{ \textbf{отвергается}}.
+	\]
+	
+	\subsubsection*{(f) $\chi^2$: простая $H_0\colon\mathrm{Laplace}(a_0, \sigma_0)$}
+	$\chi^2_{\text{набл}} \approx 2703{,}6$, $\nu = 9$. $H_0$ \textbf{отвергается}.
+	
+	\subsubsection*{(g) $\chi^2$: сложная $H_0\colon\mathrm{Laplace}(\ahat, \hat\sigma)$}
+	$\chi^2_{\text{набл}} \approx 8{,}199$, $\nu = 7$, $\chi^2_{0{,}90}(7) = 12{,}017$.
+	$H_0$ \textbf{не отвергается} ($p \approx 0{,}315$).
+	
+	\subsubsection*{(h) НМК: $H_0\colon\mathrm{Laplace}(a_0, \sigma_0)$ vs $H_1\colon\mathrm{Laplace}(a_1, \sigma_1)$}
+	Bootstrap критическое значение $c \approx -166{,}0$.
+	$\ln\Lambda_{\text{набл}} \approx 164{,}9 \gg c$ $\Rightarrow$ \textbf{$H_0$ отвергается}.
+	
+	% ══════════════════════════════════════════════════════════════
+	\newpage
+	\section{Код на R}
+	% ══════════════════════════════════════════════════════════════
+	
+	\subsection*{Задание 1 --- ключевые фрагменты}
+	
+\begin{lstlisting}
+	x <- c(1,0,1,1,3,1,0,1,0,1,1,1,0,1,1,0,0,1,2,0,
+	1,1,0,1,1,0,2,0,0,0,0,1,1,0,0,2,0,1,0,1,
+	1,0,1,0,0,0,1,2,0,2)
+	n      <- length(x)   # sample size = 50
+	alpha1  <- 0.05        # significance level
+	lambda0 <- 1.40        # H0 parameter
+	lambda1 <- 0.70        # H1 parameter
+	
+	# (b) Sample characteristics
+	x_mean <- mean(x)             # MLE for E[X]
+	x_var  <- var(x)              
+	m2 <- mean((x-x_mean)^2)     
+	m3 <- mean((x-x_mean)^3)   
+	asymm <- m3/m2^(3/2)        
+	kurt  <- mean((x-x_mean)^4)/m2^2 - 3  # (0 for normal)
+	
+	# (d) Asymptotic CI for lambda: lambda_hat +/- z * SE
+	lambda_mle <- x_mean        
+	ci <- lambda_mle + c(-1,1)*qnorm(1-alpha1/2)*sqrt(lambda_mle/n)
+	
+	# (e) Chi-squared test: simple H0: Poisson(lambda0)
+	obs  <- c(22,22,5,1)
+	exp0 <- n*c(dpois(0:2,lambda0), 1-ppois(2,lambda0))
+	chi2_e <- sum((obs-exp0)^2/exp0) 
+	
+	# (g) Neyman-Pearson most powerful test via T = sum(x)
+	T_obs  <- sum(x)                        
+	c_crit <- qpois(alpha1, lambda = n*lambda0) 
+\end{lstlisting}
+
+\subsection*{Задание 2 --- ключевые фрагменты}
+
+\begin{lstlisting}
+	x <- c(8.752,2.202,...,-0.056)  # sample, n = 50
+	n <- 50; alpha2 <- 0.10      
+	a0 <- 9;  sigma0 <- 2            # simple H0: N(a0, sigma0^2)
+	a1 <- 3;  sigma1 <- 2            # alternative H1: N(a1, sigma1^2)
+	
+	# (d) Confidence intervals at level 1 - alpha2 = 0.90
+	t_crit  <- qt(1-alpha2/2, df=n-1) 
+	s       <- sd(x)
+	ci_a    <- mean(x) + c(-1,1)*t_crit*s/sqrt(n)
+	
+	# CI for sigma^2: chi-squared distribution with df = n-1
+	chi2_lo <- qchisq(alpha2/2, df=n-1)   
+	chi2_hi <- qchisq(1-alpha2/2, df=n-1) 
+	ci_s2   <- c((n-1)*s^2/chi2_hi, (n-1)*s^2/chi2_lo)
+	
+	# (e) Kolmogorov test: simple H0: N(a0, sigma0^2)
+	ks_result <- ks.test(x, "pnorm", mean=a0, sd=sigma0)
+	
+	# (h) Neyman-Pearson test via log-likelihood ratio
+	logL <- function(dat, mu, sig) sum(dnorm(dat, mu, sig, log=TRUE))
+	log_Lambda <- logL(x,a1,sigma1) - logL(x,a0,sigma0)
+	
+	# Critical value c via bootstrap from H0: take quantile 1-alpha2
+	set.seed(42); B <- 10000
+	boot <- replicate(B, {xb <- rnorm(n,a0,sigma0);
+		logL(xb,a1,sigma1)-logL(xb,a0,sigma0)})
+	c_crit <- quantile(boot, 1-alpha2)  
+\end{lstlisting}
+	
+	% ══════════════════════════════════════════════════════════════
+	\section{Сводная таблица результатов}
+	% ══════════════════════════════════════════════════════════════
+	
+	\begin{table}[H]
+		\centering
+		\renewcommand{\arraystretch}{1.3}
+		\begin{tabular}{clcc}
+			\toprule
+			\textbf{Пункт} & \textbf{Критерий / характеристика} & \textbf{Зад.\,1} & \textbf{Зад.\,2} \\
+			\midrule
+			(b) & $\xbar$ & $0{,}70$ & $3{,}023$ \\
+			& $s^2$   & $0{,}541$ & $3{,}857$ \\
+			& $A_s$   & $0{,}840$ & $-0{,}184$ \\
+			& $E_x$   & $0{,}398$ & $2{,}581$ \\
+			\midrule
+			(c) & МПП $\hat\theta$ & $\lahat=0{,}70$ & $\ahat=3{,}023,\ \shat=3{,}779$ \\
+			& Смещение & $0$ & $0$ и $-\sigma^2/n \approx -0{,}077$ \\
+			\midrule
+			(d) & ДИ для $\theta$ & $[0{,}468;\,0{,}932]$ & $a\!:[2{,}557;\,3{,}489]$ \\
+			&                  &                        & $\sigma^2\!:[2{,}849;\,5{,}569]$ \\
+			\midrule
+			(e) & Простая $H_0$ & $\chi^2=16{,}85$, откл. & Кол.\,$K_n=6{,}39$, откл. \\
+			\midrule
+			(f) & $\chi^2$ прост. & Geom: $\chi^2=16{,}69$, откл. & $\chi^2=411{,}2$, откл. \\
+			& $\chi^2$ слож.  & Geom: $\chi^2=11{,}72$, откл. & $\chi^2=5{,}04$, не откл. \\
+			\midrule
+			(g) & НМК & $T=35\le 57$, откл. & $\ln\Lambda=223{,}3$, откл. \\
+			& Перестановка & $T=35<45$, не откл. & $\ln\Lambda'=-223{,}3$, не откл. \\
+			\bottomrule
+		\end{tabular}
+		\caption{Сводка основных результатов (уровень $\alpha_1=0{,}05$, $\alpha_2=0{,}10$)}
+	\end{table}
+	
+\end{document}

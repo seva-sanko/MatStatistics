@@ -1,0 +1,18 @@
+# PDFs
+*.pdf
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.synctex.gz
+*.toc
+*.out
+
+# R artifacts
+.RData
+.Rhistory
+.Rapp.history
+
+# macOS
+.DS_Store
+**/.DS_Store
